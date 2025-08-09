@@ -1,207 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Birthday Members</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            background-color: #001f3f;
-            color: white;
-            padding: 2rem;
-        }
-
-        h1, h2 {
-            color: #ffd700;
-            text-align: center;
-        }
-
-        .month-selector, .form-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            max-width: 500px;
-            margin: 1rem auto;
-        }
-
-        select, input, button {
-            padding: 0.5rem;
-            margin: 0.3rem 0;
-            border-radius: 4px;
-            border: none;
-            font-size: 1rem;
-        }
-
-        select, input {
-            width: calc(100% - 1rem);
-        }
-
-        button {
-            background-color: #ffd700;
-            color: #001f3f;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-        }
-
-            button:hover {
-                background-color: #e6c200;
-            }
-
-        .member-list {
-            margin-top: 1rem;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .member {
-            background: rgba(255, 255, 255, 0.08);
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            border-radius: 4px;
-        }
-        /* Passcode screen */
-        #passcodeScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #001f3f;
-        }
-
-            #passcodeScreen input {
-                max-width: 200px;
-                text-align: center;
-            }
-
-        #mainContent {
-            display: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Birthday Members</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        margin: 0;
+        background-color: #001f3f;
+        color: white;
+        padding: 2rem;
+    }
+    h1, h2 {
+        color: #ffd700;
+        text-align: center;
+    }
+    .month-selector, .form-section {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        max-width: 500px;
+        margin: 1rem auto;
+    }
+    select, input, button {
+        padding: 0.5rem;
+        margin: 0.3rem 0;
+        border-radius: 4px;
+        border: none;
+        font-size: 1rem;
+    }
+    select, input {
+        width: calc(100% - 1rem);
+    }
+    button {
+        background-color: #ffd700;
+        color: #001f3f;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #e6c200;
+    }
+    .member-list {
+        margin-top: 1rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .member {
+        background: rgba(255, 255, 255, 0.08);
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        border-radius: 4px;
+    }
+    /* Passcode screen */
+    #passcodeScreen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #001f3f;
+    }
+    #passcodeScreen input {
+        max-width: 200px;
+        text-align: center;
+    }
+    #mainContent {
+        display: none;
+    }
+    .copy-btn {
+        display: block;
+        margin: 0.5rem auto;
+        padding: 0.5rem 1rem;
+    }
+</style>
 </head>
 <body>
 
-    <div id="passcodeScreen">
-        <h1>🔒 Enter Access Code</h1>
-        <input type="password" id="accessCode" placeholder="Enter code">
-        <button onclick="checkCode()">Submit</button>
-        <p id="errorMsg" style="color: red; display: none;">Incorrect code. Try again.</p>
+<div id="passcodeScreen">
+    <h1>🔒 Enter Access Code</h1>
+    <input type="password" id="accessCode" placeholder="Enter code">
+    <button onclick="checkCode()">Submit</button>
+    <p id="errorMsg" style="color: red; display: none;">Incorrect code. Try again.</p>
+</div>
+
+<div id="mainContent">
+    <h1>🎉 Member Birthdays</h1>
+
+    <div class="month-selector">
+        <label for="monthSelect">Select month:</label>
+        <select id="monthSelect"></select>
+        <button class="copy-btn" onclick="copyCurrentMembers()">Copy Birthdays</button>
     </div>
 
-    <div id="mainContent">
-        <h1>🎉 Member Birthdays</h1>
+    <div class="member-list" id="memberList">Loading...</div>
 
-        <div class="month-selector">
-            <label for="monthSelect">Select month:</label>
-            <select id="monthSelect"></select>
-        </div>
-
-        <div class="member-list" id="memberList">Loading...</div>
-
-        <div class="form-section">
-            <h2>Add a Member</h2>
-            <form id="addMemberForm">
-                <label>Name:<input type="text" id="name" required></label>
-                <label>Day:<input type="number" id="day" min="1" max="31" required></label>
-                <label>Month:<input type="number" id="month" min="1" max="12" required></label>
-                <button type="submit">Add Member</button>
-            </form>
-        </div>
+    <div class="form-section">
+        <h2>Add a Member</h2>
+        <form id="addMemberForm">
+            <label>Name:<input type="text" id="name" required></label>
+            <label>Day:<input type="number" id="day" min="1" max="31" required></label>
+            <label>Month:<input type="number" id="month" min="1" max="12" required></label>
+            <button type="submit">Add Member</button>
+        </form>
     </div>
+</div>
 
-    <script>const LEGACY_URL = "https://664a4c03a300e8795d419292.mockapi.io/members";
-        const URL = "https://664a4c03a300e8795d419292.mockapi.io/members2";
-        let members = [];
+<script>
+const LEGACY_URL = "https://664a4c03a300e8795d419292.mockapi.io/members";
+const URL = "https://664a4c03a300e8795d419292.mockapi.io/members2";
+let members = [];
 
-        function checkCode() {
-            const codeInput = document.getElementById("accessCode").value.trim().toLowerCase();
-            if (codeInput === "tol") {
-                document.getElementById("passcodeScreen").style.display = "none";
-                document.getElementById("mainContent").style.display = "block";
-                init(); // Load data after unlocking
-            } else {
-                document.getElementById("errorMsg").style.display = "block";
-            }
-        }
+function checkCode() {
+    const codeInput = document.getElementById("accessCode").value.trim().toLowerCase();
+    if (codeInput === "tol") {
+        document.getElementById("passcodeScreen").style.display = "none";
+        document.getElementById("mainContent").style.display = "block";
+        init(); // Load data after unlocking
+    } else {
+        document.getElementById("errorMsg").style.display = "block";
+    }
+}
 
-        async function fetchMembers() {
-            members = [];
-            for (let u of [LEGACY_URL, URL]) {
-                const res = await fetch(u);
-                const data = await res.json();
-                data.forEach(m => {
-                    members.push({
-                        name: m.name,
-                        birthday: parseInt(m.birthday),
-                        birthmonth: parseInt(m.birthmonth)
-                    });
-                });
-            }
-        }
-
-        function renderMembers(month) {
-            const list = document.getElementById("memberList");
-            const filtered = members.filter(m => m.birthmonth === month);
-            if (filtered.length === 0) {
-                list.innerHTML = "<p>No birthdays this month.</p>";
-                return;
-            }
-            list.innerHTML = filtered
-                .sort((a, b) => a.birthday - b.birthday)
-                .map(m => `<div class="member">🎂 ${m.name} - ${m.birthmonth}/${m.birthday}</div>`)
-                .join("");
-        }
-
-        function populateMonthDropdown() {
-            const select = document.getElementById("monthSelect");
-            for (let i = 1; i <= 12; i++) {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = new Date(2000, i - 1, 1).toLocaleString('default', { month: 'long' });
-                select.appendChild(option);
-            }
-            select.value = new Date().getMonth() + 1;
-        }
-
-        async function addMember(name, day, month) {
-            const res = await fetch(URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, birthday: day, birthmonth: month })
+async function fetchMembers() {
+    members = [];
+    for (let u of [LEGACY_URL, URL]) {
+        const res = await fetch(u);
+        const data = await res.json();
+        data.forEach(m => {
+            members.push({
+                name: m.name,
+                birthday: parseInt(m.birthday),
+                birthmonth: parseInt(m.birthmonth)
             });
-            if (!res.ok) {
-                alert("Error adding member");
-                return;
-            }
-            await fetchMembers();
-            renderMembers(parseInt(document.getElementById("monthSelect").value));
-        }
-
-        document.getElementById("monthSelect").addEventListener("change", e => {
-            renderMembers(parseInt(e.target.value));
         });
+    }
+}
 
-        document.getElementById("addMemberForm").addEventListener("submit", async e => {
-            e.preventDefault();
-            const name = document.getElementById("name").value.trim();
-            const day = parseInt(document.getElementById("day").value);
-            const month = parseInt(document.getElementById("month").value);
-            if (!name || isNaN(day) || isNaN(month)) {
-                alert("Please fill in all fields correctly.");
-                return;
-            }
-            await addMember(name, day, month);
-            e.target.reset();
-        });
+function renderMembers(month) {
+    const list = document.getElementById("memberList");
+    const filtered = members.filter(m => m.birthmonth === month);
+    if (filtered.length === 0) {
+        list.innerHTML = "<p>No birthdays this month.</p>";
+        return;
+    }
+    list.innerHTML = filtered
+        .sort((a, b) => a.birthday - b.birthday)
+        .map(m => `<div class="member">🎂 ${m.name} - ${m.birthmonth}/${m.birthday}</div>`)
+        .join("");
+}
 
-        async function init() {
-            populateMonthDropdown();
-            await fetchMembers();
-            renderMembers(parseInt(document.getElementById("monthSelect").value));
-        }</script>
+function populateMonthDropdown() {
+    const select = document.getElementById("monthSelect");
+    for (let i = 1; i <= 12; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = new Date(2000, i - 1, 1).toLocaleString('default', { month: 'long' });
+        select.appendChild(option);
+    }
+    select.value = new Date().getMonth() + 1;
+}
+
+async function addMember(name, day, month) {
+    const res = await fetch(URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, birthday: day, birthmonth: month })
+    });
+    if (!res.ok) {
+        alert("Error adding member");
+        return;
+    }
+    await fetchMembers();
+    renderMembers(parseInt(document.getElementById("monthSelect").value));
+}
+
+function copyCurrentMembers() {
+    const month = parseInt(document.getElementById("monthSelect").value);
+    const filtered = members.filter(m => m.birthmonth === month)
+        .sort((a, b) => a.birthday - b.birthday)
+        .map(m => `${m.name} - ${m.birthmonth}/${m.birthday}`)
+        .join("\n");
+
+    if (!filtered) {
+        alert("No birthdays to copy.");
+        return;
+    }
+
+    navigator.clipboard.writeText(filtered).then(() => {
+        alert("Birthdays copied to clipboard!");
+    }).catch(err => {
+        alert("Failed to copy: " + err);
+    });
+}
+
+document.getElementById("monthSelect").addEventListener("change", e => {
+    renderMembers(parseInt(e.target.value));
+});
+
+document.getElementById("addMemberForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const day = parseInt(document.getElementById("day").value);
+    const month = parseInt(document.getElementById("month").value);
+    if (!name || isNaN(day) || isNaN(month)) {
+        alert("Please fill in all fields correctly.");
+        return;
+    }
+    await addMember(name, day, month);
+    e.target.reset();
+});
+
+async function init() {
+    populateMonthDropdown();
+    await fetchMembers();
+    renderMembers(parseInt(document.getElementById("monthSelect").value));
+}
+</script>
 </body>
 </html>
