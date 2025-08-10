@@ -3,140 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birthday Members</title>
+    <title>Member Birthdays</title>
     <style>
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f4f1e9;
             margin: 0;
-            background-color: #001f3f;
-            color: white;
-            padding: 1rem;
+            padding: 0;
+            color: #333;
         }
 
-        h1, h2 {
-            color: #ffd700;
+        header {
+            background-color: #002147;
+            color: white;
+            padding: 15px;
             text-align: center;
         }
 
-        .month-selector, .form-section {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            max-width: 500px;
-            margin: 1rem auto;
-            width: 100%;
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .form-section {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
         }
 
         select, input, button {
-            padding: 0.7rem;
-            margin: 0.4rem 0;
-            border-radius: 4px;
-            border: none;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-
-        select, input {
             width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
         button {
-            background-color: #ffd700;
-            color: #001f3f;
-            font-weight: bold;
+            background-color: #002147;
+            color: white;
+            border: none;
             cursor: pointer;
-            width: 100%;
+            margin-top: 15px;
         }
 
             button:hover {
-                background-color: #e6c200;
+                background-color: #004080;
             }
 
-        .member-list {
-            margin-top: 1rem;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+        ul {
+            list-style: none;
+            padding: 0;
         }
 
-        .member {
-            background: rgba(255, 255, 255, 0.08);
-            margin: 0.5rem 0;
-            padding: 0.7rem;
+        li {
+            padding: 8px;
+            background: #fff;
+            margin-bottom: 5px;
             border-radius: 4px;
-            font-size: 1rem;
-        }
-        /* Passcode screen */
-        #passcodeScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #001f3f;
-            padding: 1rem;
+            box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
         }
 
-            #passcodeScreen input {
-                max-width: 250px;
-                text-align: center;
-                font-size: 1.1rem;
-            }
-
-        #mainContent {
-            display: none;
-        }
-
-        .copy-btn {
-            margin-top: 0.5rem;
-        }
-        /* Mobile adjustments */
         @media (max-width: 600px) {
             body {
-                padding: 0.5rem;
+                font-size: 16px;
             }
 
-            h1 {
-                font-size: 1.6rem;
-            }
-
-            h2 {
-                font-size: 1.3rem;
-            }
-
-            select, input, button {
-                font-size: 1rem;
+            button, select, input {
+                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div id="passcodeScreen">
-        <h1>🔒 Enter Access Code</h1>
-        <input type="password" id="accessCode" placeholder="Enter code">
-        <button onclick="checkCode()">Submit</button>
-        <p id="errorMsg" style="color: red; display: none;">Incorrect code. Try again.</p>
-    </div>
+    <header>
+        <h1>Member Birthdays</h1>
+    </header>
 
-    <div id="mainContent">
-        <h1>🎉 Member Birthdays</h1>
+    <div class="container" id="app" style="display:none;">
 
-        <div class="month-selector">
-            <label for="monthSelect">Select month:</label>
+        <!-- Month Selector -->
+        <div class="form-section">
+            <label for="monthSelect">View Birthdays for:</label>
             <select id="monthSelect"></select>
-            <button class="copy-btn" onclick="copyCurrentMembers()">Copy Birthdays</button>
+            <button id="copyButton">Copy Current Members</button>
         </div>
 
-        <div class="member-list" id="memberList">Loading...</div>
+        <!-- Member List -->
+        <div class="form-section">
+            <h2>Birthdays</h2>
+            <ul id="memberList"></ul>
+        </div>
 
+        <!-- Add Member Form -->
         <div class="form-section">
             <h2>Add a Member</h2>
             <form id="addMemberForm">
-                <label>Name:<input type="text" id="name" required></label>
-                <label>Day:<input type="number" id="day" min="1" max="31" required></label>
-                <label>Month:<input type="number" id="month" min="1" max="12" required></label>
+                <label>
+                    Name:
+                    <input type="text" id="name" required>
+                </label>
+
+                <label>
+                    Day:
+                    <select id="day" required></select>
+                </label>
+
+                <label>
+                    Month:
+                    <select id="month" required></select>
+                </label>
+
                 <button type="submit">Add Member</button>
             </form>
         </div>
@@ -146,111 +136,122 @@
         const URL = "https://664a4c03a300e8795d419292.mockapi.io/members2";
         let members = [];
 
-        function checkCode() {
-            const codeInput = document.getElementById("accessCode").value.trim().toLowerCase();
-            if (codeInput === "tol") {
-                document.getElementById("passcodeScreen").style.display = "none";
-                document.getElementById("mainContent").style.display = "block";
-                init(); // Load data after unlocking
-            } else {
-                document.getElementById("errorMsg").style.display = "block";
-            }
-        }
-
         async function fetchMembers() {
             members = [];
-            for (let u of [LEGACY_URL, URL]) {
+            const urls = [LEGACY_URL, URL];
+            for (const u of urls) {
                 const res = await fetch(u);
                 const data = await res.json();
-                data.forEach(m => {
-                    members.push({
-                        name: m.name,
-                        birthday: parseInt(m.birthday),
-                        birthmonth: parseInt(m.birthmonth)
-                    });
-                });
+                members = members.concat(data.map(m => ({
+                    name: m.name,
+                    birthday: m.birthday,
+                    birthmonth: m.birthmonth
+                })));
             }
         }
 
-        function renderMembers(month) {
+        function displayMembers(month) {
             const list = document.getElementById("memberList");
-            const filtered = members.filter(m => m.birthmonth === month);
-            if (filtered.length === 0) {
-                list.innerHTML = "<p>No birthdays this month.</p>";
-                return;
-            }
-            list.innerHTML = filtered
-                .sort((a, b) => a.birthday - b.birthday)
-                .map(m => `<div class="member">🎂 ${m.name} - ${m.birthmonth}/${m.birthday}</div>`)
-                .join("");
+            list.innerHTML = "";
+            const filtered = members.filter(m => m.birthmonth == month);
+            filtered.sort((a, b) => a.birthday - b.birthday);
+            filtered.forEach(m => {
+                const li = document.createElement("li");
+                li.textContent = `${m.name} - ${m.birthmonth}/${m.birthday}`;
+                list.appendChild(li);
+            });
         }
 
-        function populateMonthDropdown() {
-            const select = document.getElementById("monthSelect");
-            select.innerHTML = "";
-            for (let i = 1; i <= 12; i++) {
+        function populateDayDropdown(month) {
+            const daySelect = document.getElementById("day");
+            daySelect.innerHTML = "";
+            const daysInMonth = new Date(2024, month, 0).getDate();
+            for (let d = 1; d <= daysInMonth; d++) {
                 const option = document.createElement("option");
-                option.value = i;
-                option.textContent = new Date(2000, i - 1, 1).toLocaleString('default', { month: 'long' });
-                select.appendChild(option);
+                option.value = d;
+                option.textContent = d;
+                daySelect.appendChild(option);
             }
-            select.value = new Date().getMonth() + 1;
+        }
+
+        function populateMonthDropdowns() {
+            const monthSelectForm = document.getElementById("month");
+            const filterMonthSelect = document.getElementById("monthSelect");
+            const monthNames = Array.from({ length: 12 }, (_, i) =>
+                new Date(2000, i, 1).toLocaleString('default', { month: 'long' })
+            );
+            monthSelectForm.innerHTML = "";
+            filterMonthSelect.innerHTML = "";
+            monthNames.forEach((name, i) => {
+                const option1 = document.createElement("option");
+                option1.value = i + 1;
+                option1.textContent = name;
+                monthSelectForm.appendChild(option1);
+
+                const option2 = document.createElement("option");
+                option2.value = i + 1;
+                option2.textContent = name;
+                filterMonthSelect.appendChild(option2);
+            });
+            filterMonthSelect.value = new Date().getMonth() + 1;
+            monthSelectForm.addEventListener("change", (e) => {
+                populateDayDropdown(parseInt(e.target.value));
+            });
+            populateDayDropdown(new Date().getMonth() + 1);
         }
 
         async function addMember(name, day, month) {
-            const res = await fetch(URL, {
+            const newMember = { name, birthday: parseInt(day), birthmonth: parseInt(month) };
+            await fetch(URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, birthday: day, birthmonth: month })
+                body: JSON.stringify(newMember)
             });
-            if (!res.ok) {
-                alert("Error adding member");
-                return;
-            }
-            await fetchMembers();
-            renderMembers(parseInt(document.getElementById("monthSelect").value));
+            await init();
         }
 
         function copyCurrentMembers() {
-            const month = parseInt(document.getElementById("monthSelect").value);
-            const filtered = members.filter(m => m.birthmonth === month)
-                .sort((a, b) => a.birthday - b.birthday)
+            const currentMonth = parseInt(document.getElementById("monthSelect").value);
+            const filtered = members.filter(m => m.birthmonth == currentMonth)
                 .map(m => `${m.name} - ${m.birthmonth}/${m.birthday}`)
                 .join("\n");
-
-            if (!filtered) {
-                alert("No birthdays to copy.");
-                return;
-            }
-
             navigator.clipboard.writeText(filtered).then(() => {
-                alert("Birthdays copied to clipboard!");
-            }).catch(err => {
-                alert("Failed to copy: " + err);
+                alert("Copied to clipboard!");
             });
         }
 
-        document.getElementById("monthSelect").addEventListener("change", e => {
-            renderMembers(parseInt(e.target.value));
-        });
+        async function init() {
+            await fetchMembers();
+            const currentMonth = parseInt(document.getElementById("monthSelect").value);
+            displayMembers(currentMonth);
+        }
 
-        document.getElementById("addMemberForm").addEventListener("submit", async e => {
+        document.getElementById("monthSelect").addEventListener("change", (e) => {
+            displayMembers(parseInt(e.target.value));
+        });
+        document.getElementById("addMemberForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             const name = document.getElementById("name").value.trim();
-            const day = parseInt(document.getElementById("day").value);
-            const month = parseInt(document.getElementById("month").value);
-            if (!name || isNaN(day) || isNaN(month)) {
-                alert("Please fill in all fields correctly.");
-                return;
+            const day = document.getElementById("day").value;
+            const month = document.getElementById("month").value;
+            if (name && day && month) {
+                await addMember(name, day, month);
+                e.target.reset();
+                populateDayDropdown(new Date().getMonth() + 1);
             }
-            await addMember(name, day, month);
-            e.target.reset();
         });
+        document.getElementById("copyButton").addEventListener("click", copyCurrentMembers);
 
-        async function init() {
-            populateMonthDropdown();
-            await fetchMembers();
-            renderMembers(parseInt(document.getElementById("monthSelect").value));
-        }</script>
+        // Password Gate
+        (function () {
+            const code = prompt("Enter access code:");
+            if (code && code.toLowerCase() === "tol") {
+                document.getElementById("app").style.display = "block";
+                populateMonthDropdowns();
+                init();
+            } else {
+                document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
+            }
+        })();</script>
 </body>
 </html>
